@@ -19,7 +19,7 @@ class Book extends Component {
     return (
         <div className="book">
            <div className="book-top">
-               <div className="book-cover" style={{ height: 192, width: 128, backgroundImage: `url(${book.imageLinks !== undefined ? book.imageLinks.thumbnail: ''})` }} />
+               <div className="book-cover" style={{ height: 192, width: 128, backgroundImage: `url(${book.imageLinks !== undefined ? book.imageLinks.thumbnail.replace('http:', 'https:'): ''})` }} />
                 <div className="book-shelf-changer">
                     <select value={book.shelf} onChange={(e) => this.updateBook(e.target.value)}>
                         <option value="" disabled>Move to...</option>
