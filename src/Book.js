@@ -9,6 +9,10 @@ class Book extends Component {
     onMoveBook: PropTypes.func.isRequired
   }
 
+  updateBook(shelf) {
+    this.props.onMoveBook(this.props.book, shelf)
+  }
+  
   render() {
     const {book} = this.props
     

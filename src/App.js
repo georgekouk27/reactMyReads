@@ -4,6 +4,7 @@ import * as BooksAPI from './BooksAPI'
 import './App.css'
 import BookShelf from './BookShelf'
 import Title from './Title'
+import Search from './Search'
 
 class BooksApp extends React.Component {
   
@@ -11,11 +12,23 @@ class BooksApp extends React.Component {
     books : []
   }
 
-
   componentDidMount() {
     BooksAPI.getAll().then((books) => {
       this.setState({ books })
     })
+  }
+
+  moveBook = (book, shelf) => {
+    if (this.state.books) {
+      BooksAPI
+        .update(book, shelf)
+        .then(() => {
+          book.shelf = shelf;
+          this.setState(state => ({
+            books: state.books.filter(b => b.id !== book.id).concat([ book ])
+          }))
+        })
+    }
   }
 
   render() {
@@ -42,6 +55,12 @@ class BooksApp extends React.Component {
               <Link to="/search">Add a book</Link>
             </div>
           </div>
+        )}/>
+		<Route path="/search" render={() => (
+          <Search
+            onMoveBook={this.moveBook}
+            booksOnShelf={this.state.books}
+          />
         )}/>
       </div>
     )
