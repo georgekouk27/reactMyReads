@@ -16,24 +16,32 @@ class Search extends Component {
     books: []
   }
 
-  updateQuery = (query) => {
-    if (!query) {
-      this.setState({query: '', books: []})
-    } 
-    else {
-      this.setState({ query: query.trim() })
-      
-      BooksAPI.search(query).then((books) => {
-        if (books.error) {
-          books = []
-        }
-        
-        books.map(book => book.shelf = "none")
-        books.map(book => (this.props.booksOnShelf.filter((b) => b.id === book.id).map(b => book.shelf = b.shelf)))
+ queryTimer = null;
 
-        this.setState({books})
-      })
-    }
+  onChangeQuery = (value) => {
+      clearTimeout(this.queryTimer);
+      
+    //Update the query state and wait before executing the search
+      this.setState({query: value});
+      this.queryTimer = setTimeout(this.updateQuery, 300);
+  }
+
+  updateQuery = () => {
+      if (this.state.query === "") {
+         this.setState({books: []})
+      } 
+      else {
+          BooksAPI.search(this.state.query).then((books) => {
+              if (books.error) {
+                 books = []
+              }
+
+              books.map(book => book.shelf = "none")
+              books.map(book => (this.props.booksOnShelf.filter((b) => b.id === book.id).map(b => book.shelf = b.shelf)))
+
+              this.setState({books})
+          })
+      }
   }
 
   render () {
@@ -43,9 +51,10 @@ class Search extends Component {
           <Link className="close-search" to="/">Close</Link>
           <div className="search-books-input-wrapper">
             <input 
-              type="text" 
-              placeholder="Search by title or author"
-              onChange={(e) => this.updateQuery(e.target.value)}
+                type="text" 
+                value={this.state.query.value}
+                placeholder="Search by title or author"
+                onChange={(e) => this.onChangeQuery(e.target.value)}
             />
           </div>
         </div>
@@ -56,9 +65,9 @@ class Search extends Component {
                 {this.state.books
                   .map(book => (
                     <Book 
-                      onMoveBook={this.props.onMoveBook}
-                      key={book.id}
-                      book={book}
+                        onMoveBook={this.props.onMoveBook}
+                        key={book.id}
+                        book={book}
                     />
                   ))
                 }
