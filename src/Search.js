@@ -38,6 +38,20 @@ class Search extends Component {
 
               books.map(book => book.shelf = "none")
               books.map(book => (this.props.booksOnShelf.filter((b) => b.id === book.id).map(b => book.shelf = b.shelf)))
+            
+              books.map((book) => {
+                  book.shelf = "none";
+                  
+                  const booksInMyCollection = this.props.booksOnShelf.filter(
+                  		(b) => b.id === book.id
+                  );
+                
+                  if (booksInMyCollection && booksInMyCollection.length) {
+                  		book.shelf = booksInMyCollection[0].shelf;
+                  }
+                
+                  return book;
+             });
 
               this.setState({books})
           })
